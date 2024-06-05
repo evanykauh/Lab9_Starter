@@ -47,6 +47,15 @@
       width: 122px;
     }
   </style>
+  <!-- TrackJS Script -->
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "60906e3e4ba74e9f9a200450e80ac499"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+                        
 </head>
 
 <body>
@@ -69,21 +78,23 @@
     </form>
 
     <section id="error-btns">
-      <button>Console Log</button>
-      <button>Console Error</button>
-      <button>Console Count</button>
-      <button>Console Warn</button>
-      <button>Console Assert</button>
-      <button>Console Clear</button>
-      <button>Console Dir</button>
-      <button>Console dirxml</button>
-      <button>Console Group Start</button>
-      <button>Console Group End</button>
-      <button>Console Table</button>
-      <button>Start Timer</button>
-      <button>End Timer</button>
-      <button>Console Trace</button>
-      <button>Trigger a Global Error</button>
+      <button onclick="logMessage()">Console Log</button>
+      <button onclick="logError()">Console Error</button>
+      <button onclick="logCount()">Console Count</button>
+      <button onclick="logWarning()">Console Warn</button>
+      <button onclick="logAssert()">Console Assert</button>
+      <button onclick="clearConsole()">Console Clear</button>
+      <button onclick="consoleDir()">Console Dir</button>
+      <button onclick="dirXml()">Console dirxml</button>
+      <button onclick="groupStart()">Console Group Start</button>
+      <button onclick="groupEnd()">Console Group End</button>
+      <button onclick="consoleTable()">Console Table</button>
+      <button onclick="startTimer()">Start Timer</button>
+      <button onclick="endTimer()">End Timer</button>
+      <button onclick="consoleTrace()">Console Trace</button>
+      <button id="globalErrorButton">Trigger a Global Error</button>
+
+      <button id="customErrorButton">Trigger Custom Error</button>
     </section>
   </main>
 
@@ -102,6 +113,111 @@
 
     // Start your code here
     // You may move this JS to another file if you wish
+
+    function logMessage(){
+      console.log('Console Log Demo');
+    }
+
+    function logError(){
+      console.error('Console Error Demo');
+    }
+
+    let count = 1;
+    function logCount(){
+      console.log('Count button: ' + count);
+      count++;
+    }
+
+    function logWarning(){
+      console.warn('Console Warn Button');
+    }
+
+    const number = 2;
+    function logAssert(){
+      console.assert(number == 3, "The number is not equal to 3");
+    }
+
+    function clearConsole(){
+      console.clear();
+    }
+
+    function consoleDir(){
+      console.dir(document.body);
+    }
+
+    function dirXml(){
+      console.dirxml(document);
+    }
+
+    function groupStart(){
+      console.group('Group');
+      console.log('Inside Group');
+    }
+
+    function groupEnd(){
+      console.groupEnd();
+    }
+
+    function consoleTable(){
+      console.table([
+          { name: "Evan", age: 9999 },
+          { name: "Kabir", age: 0 },
+        ]);
+    }
+
+    function startTimer(){
+      console.time("Timer");
+    }
+
+    function endTimer(){
+      console.timeEnd("Timer");
+    }
+
+    function consoleTrace(){
+      console.trace("This is a console Trace Demo");
+    }
+
+
+    window.onerror = function (message, source, lineno, colno, error) {
+        console.error(
+          `Global error caught: ${message} at ${source}:${lineno}:${colno}`,
+          error
+        );
+        // TrackJS can be used to track the error
+        TrackJS && TrackJS.track(error);
+        return true;
+      };
+
+      document
+        .getElementById("globalErrorButton")
+        .addEventListener("click", () => {
+          undefinedFunction();
+        });
+
+      class CustomError extends Error {
+        constructor(message) {
+          super(message);
+          this.name = "CustomError";
+        }
+      }
+
+      function triggerCustomError() {
+        try {
+          throw new CustomError("This is a custom error");
+        } catch (error) {
+          console.error(error.name + ": " + error.message);
+          // TrackJS can be used to track the error
+          TrackJS && TrackJS.track(error);
+        }
+      }
+
+      document
+        .getElementById("customErrorButton")
+        .addEventListener("click", triggerCustomError);
+
+      // Manually track an error to verify TrackJS installation
+      TrackJS && TrackJS.track("Testing TrackJS!");
+
   </script>
 </body>
 
